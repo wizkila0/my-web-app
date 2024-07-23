@@ -40,17 +40,6 @@
             cursor: pointer;
             width: 100%;
         }
-        .message, .new-image {
-            display: none;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 20px;
-            border-radius: 5px;
-            text-align: center;
-        }
-        .new-image img {
-            max-width: 100%;
-            border-radius: 5px;
-        }
     </style>
 </head>
 <body>
@@ -61,10 +50,6 @@
         <input type="email" name="email" placeholder="Your Email" required>
         <button type="submit">Submit</button>
     </form>
-    <div id="message" class="message"></div>
-    <div id="newImage" class="new-image">
-        <img src="https://github.com/wizkila0/my-web-app/blob/main/background_2.jpg?raw=true" alt="New Background">
-    </div>
 
     <script>
         document.getElementById('contactForm').addEventListener('submit', async function (event) {
@@ -80,13 +65,7 @@
             });
             if (response.ok) {
                 const name = form.querySelector('input[name="name"]').value;
-                const messageDiv = document.getElementById('message');
-                messageDiv.innerText = Welcome ${name}, you have successfully submitted your email address.;
-                messageDiv.style.display = 'block';
-                form.style.display = 'none';
-
-                const newImageDiv = document.getElementById('newImage');
-                newImageDiv.style.display = 'block';
+                window.location.href = confirmation.html?name=${encodeURIComponent(name)};
             } else {
                 const errorData = await response.json();
                 alert(There was a problem with your submission: ${errorData.error});
