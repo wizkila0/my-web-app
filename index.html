@@ -6,7 +6,7 @@
     <title>My Web App</title>
     <style>
         body {
-            background-image: url('20231109_160218.jpg');
+            background-image: url('20231109_160218.jpg'); /* Ensure this path matches your image location */
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center;
@@ -14,11 +14,41 @@
             margin: 0;
             font-family: Arial, sans-serif;
             color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        form {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 5px;
+        }
+        input {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            width: 100%;
+        }
+        button {
+            padding: 10px;
+            background: #00aaff;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            width: 100%;
         }
     </style>
 </head>
 <body>
     <h1>Welcome to My Web App</h1>
     <p>This is a simple web app hosted on GitHub Pages.</p>
+    <form action="https://formspree.io/f/mldrgnjb" method="POST">
+        <input type="text" name="name" placeholder="Your Name" required>
+        <input type="email" name="email" placeholder="Your Email" required>
+        <button type="submit">Submit</button>
+    </form>
 </body>
 </html>
