@@ -6,7 +6,7 @@
     <title>My Web App</title>
     <style>
         body {
-            background-image: url('background.jpg'); /* Replace with your image URL */
+            background-image: url('https://github.com/wizkila0/my-web-app/blob/main/-6062049466325776157_97.jpg?raw=true');
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center;
@@ -63,7 +63,7 @@
             event.preventDefault();
             const form = event.target;
             const data = new FormData(form);
-            const response = await fetch('https://formspree.io/f/mldrgnjb', { // Replace with your Formspree endpoint
+            const response = await fetch('https://formspree.io/f/mldrgnjb', { // Using your Formspree endpoint
                 method: 'POST',
                 body: data,
                 headers: {
