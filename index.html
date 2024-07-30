@@ -52,27 +52,38 @@
     </form>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const storedName = localStorage.getItem('name');
+            const storedEmail = localStorage.getItem('email');
+            if (storedName && storedEmail) {
+                document.querySelector('input[name="name"]').value = storedName;
+                document.querySelector('input[name="email"]').value = storedEmail;
+            }
+        });
+
         document.getElementById('contactForm').addEventListener('submit', async function (event) {
             event.preventDefault();
             const form = event.target;
             const data = new FormData(form);
-            try {
-                const response = await fetch('https://formspree.io/f/mldrgnjb', { // Using your Formspree endpoint
-                    method: 'POST',
-                    body: data,
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                });
-                if (response.ok) {
-                    const name = form.querySelector('input[name="name"]').value;
-                    window.location.href = `confirmation.html?name=${encodeURIComponent(name)}`;
-                } else {
-                    const errorData = await response.json();
-                    alert(`There was a problem with your submission: ${errorData.error}`);
+            const name = form.querySelector('input[name="name"]').value;
+            const email = form.querySelector('input[name="email"]').value;
+
+            // Store data in localStorage
+            localStorage.setItem('name', name);
+            localStorage.setItem('email', email);
+
+            const response = await fetch('https://formspree.io/f/mldrgnjb', {
+                method: 'POST',
+                body: data,
+                headers: {
+                    'Accept': 'application/json'
                 }
-            } catch (error) {
-                alert('There was a problem with your submission. Please try again later.');
+            });
+            if (response.ok) {
+                window.location.href = confirmation.html?name=${encodeURIComponent(name)};
+            } else {
+                const errorData = await response.json();
+                alert(There was a problem with your submission: ${errorData.error});
             }
         });
     </script>
