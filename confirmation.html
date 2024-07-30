@@ -1,46 +1,74 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confirmation</title>
-    <style>
-        body {
-            background-image: url('https://github.com/wizkila0/my-web-app/blob/main/background_2.jpg?raw=true');
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center;
-            height: 100vh;
-            margin: 0;
-            font-family: Arial, sans-serif;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-        .message {
-            background: rgba(0, 0, 0, 0.7);
-            padding: 20px;
-            border-radius: 5px;
-            text-align: center;
-        }
-    </style>
-</head>
-<body>
-    <div id="message" class="message"></div>
+import requests
+import threading
+import time
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const urlParams = new URLSearchParams(window.location.search);
-            const name = urlParams.get('name');
-            const messageDiv = document.getElementById('message');
-            if (name) {
-                messageDiv.innerText = Welcome ${name}, you have successfully submitted your email address.;
-            } else {
-                messageDiv.innerText = 'Welcome, you have successfully submitted your email address.';
-            }
-        });
-    </script>
-</body>
-</html>
+TOKEN = 'YOUR_BOT_TOKEN'
+URL = f"https://api.telegram.org/bot{TOKEN}/"
+
+# Dictionary to store user's member addition count
+user_member_count = {}
+
+def send_message(chat_id, text, delay=None):
+    url = URL + f"sendMessage?chat_id={chat_id}&text={text}"
+    response = requests.get(url)
+    message_info = response.json()
+    
+    if delay:
+        message_id = message_info['result']['message_id']
+        threading.Timer(delay, delete_message, args=[chat_id, message_id]).start()
+
+def delete_message(chat_id, message_id):
+    url = URL + f"deleteMessage?chat_id={chat_id}&message_id={message_id}"
+    requests.get(url)
+
+def handle_new_member(update):
+    chat_id = update['message']['chat']['id']
+    user_id = update['message']['new_chat_members'][0]['id']
+    
+    if user_id not in user_member_count:
+        user_member_count[user_id] = 0
+
+def handle_message(update):
+    chat_id = update['message']['chat']['id']
+    user_id = update['message']['from']['id']
+    message_id = update['message']['message_id']
+
+    if 'text' in update['message']:
+        text = update['message']['text']
+        if text.startswith('/start'):
+            send_message(chat_id, 'Welcome to the group! Please start adding members to unlock messaging.')
+        else:
+            if user_id in user_member_count:
+                user_member_count[user_id] += 1
+            else:
+                user_member_count[user_id] = 1
+            
+            if user_member_count[user_id] >= 75:  # Adjusted to 75 as per your requirement
+                send_message(chat_id, 'Congratulations! You can now send messages.', delay=20)
+            else:
+                delete_message(chat_id, message_id)
+                message_text = f"✨ውድ ደንበኛ {update['message']['from']['first_name']} የ ሽልማቱ ተካፋይ ለመሆን ቢያንስ 75 ሰው add ማድረግ አለቦት።\nእስካሁን {user_member_count[user_id]} ሰው add አድርገዋል\n\n💵 እናመሰግናለን 💵"
+                send_message(chat_id, message_text, delay=20)
+
+def main():
+    offset = None
+    while True:
+        updates = get_updates(offset)
+        if updates:
+            for update in updates:
+                offset = update['update_id'] + 1
+                if 'message' in update and 'new_chat_members' in update['message']:
+                    handle_new_member(update)
+                elif 'message' in update:
+                    handle_message(update)
+        time.sleep(1)
+
+def get_updates(offset):
+    url = URL + "getUpdates"
+    if offset:
+        url += f"?offset={offset}"
+    response = requests.get(url)
+    return response.json()['result']
+
+if name == 'main':
+    main()
