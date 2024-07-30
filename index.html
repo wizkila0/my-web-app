@@ -51,7 +51,10 @@
         <button type="submit">Submit</button>
     </form>
 
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
+        Telegram.WebApp.ready();
+
         document.addEventListener('DOMContentLoaded', function () {
             const storedName = localStorage.getItem('name');
             const storedEmail = localStorage.getItem('email');
@@ -79,8 +82,10 @@
                     'Accept': 'application/json'
                 }
             });
+
             if (response.ok) {
-                window.location.href = confirmation.html?name=${encodeURIComponent(name)};
+                Telegram.WebApp.showAlert(Welcome ${name}, you have successfully submitted your email address.);
+                Telegram.WebApp.close();
             } else {
                 const errorData = await response.json();
                 alert(There was a problem with your submission: ${errorData.error});
